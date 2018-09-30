@@ -14,6 +14,7 @@ yarn link
 **2. Create a `corn.yml` file at the root of your project:**
 
 Example below is to manage two serverless stacks as:
+
     - `microservice1/serverless.yml`
     - `microservice2/serverless.yml`
 
