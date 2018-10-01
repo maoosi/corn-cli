@@ -7,7 +7,7 @@ const log = require('consola')
 const cfg = require('./lib/config').default()
 const options = require('./lib/options').default(cfg).options
 const optionsUsage = require('./lib/options').default(cfg).optionsUsage
-const chain = require('./lib/chain').default
+const tasks = require('./lib/tasks').default
 const execShell = require('./lib/shell').default
 const execNode = require('./lib/node').default
 
@@ -24,7 +24,7 @@ let cli = require('yargs').options(options)
 for (let command in cfg.commands) {
     cli.command({
         command: command,
-        desc: cfg.commands[command].description,
+        desc: cfg.commands[command],
         builder: (yargs) => {
             yargs
                 .usage(`Usage: $0 <command> [options]`)
@@ -32,12 +32,12 @@ for (let command in cfg.commands) {
         },
         handler: (argv) => {
             asyncForEach(
-                chain(argv, cfg),
-                async (pipeline) => {
-                    if (pipeline.options.type === 'shell') {
-                        await execShell(argv, command, pipeline)
-                    } else if (pipeline.options.type === 'node') {
-                        let response = await execNode(argv, command, pipeline)
+                tasks(argv, cfg),
+                async (task) => {
+                    if (task.options.type === 'shell') {
+                        await execShell(argv, command, task)
+                    } else if (task.options.type === 'node') {
+                        let response = await execNode(argv, command, task)
                         argv.custom = Object.assign(argv.custom || {}, response)
                     }
                 }

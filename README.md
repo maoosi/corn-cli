@@ -2,28 +2,37 @@
 
 > Work in progress
 
-## Getting started (Work in progress)
+## Installation
 
-**1. Clone repo and install cli on your local machine:**
+Clone repo and install cli on your local machine:
 
 ```bash
+# cd at the root of `corn-cli` cloned repository
 cd corn-cli
+
+# symlink the package folder to your machine
 yarn link
 ```
 
-**2. Create a `corn.yml` file at the root of your project:**
+## Getting started
 
-Example below is to manage two serverless stacks as:
+Given the below project structure:
 
-- `microservice1/serverless.yml`
-- `microservice2/serverless.yml`
+```bash
+.
+|-- microservice1/
+|   |-- serverless.yml
+|-- microservice2/
+|   |-- serverless.yml
+|-- getCloudformationOutputs.js
+```
+
+**1. Create a `corn.yml` file at the root of your project:**
 
 ```yml
 commands:
-    deploy:
-        description: Deploy my 2 serverless stacks
-    remove:
-        description: Remove my 2 serverless stacks
+    deploy: Deploy my 2 serverless stacks
+    remove: Remove my 2 serverless stacks
 
 options:
     profile:
@@ -33,42 +42,39 @@ options:
         required: true
         description: AWS region
 
-pipelines:
-
-    default:
-        type: pipeline
-        flow:
-            - microservice1
-            - microservice2
+tasks:
 
     microservice1:
         type: shell
-        path: ./microservice1/
+        folder: microservice1
         commands:
             deploy: 'sls deploy --profile ${options.profile} --region ${options.region}'
             remove: 'sls remove --profile ${options.profile} --region ${options.region}'
+
+    cloudformationOutputs:
+        type: node
+        file: getCloudformationOutputs.js
 
     microservice2:
-        dependsOn: microservice1
         type: shell
-        path: ./microservice2/
+        folder: microservice2
         commands:
             deploy: 'sls deploy --profile ${options.profile} --region ${options.region}'
             remove: 'sls remove --profile ${options.profile} --region ${options.region}'
+
+pipelines:
+    default:
+        - microservice1
+        - cloudformationOutputs
+        - microservice2
 ```
 
-**3. You can now run your pipelines using `corn`:**
+**2. You can now run your pipelines using `corn`:**
 
 ```bash
 # Corn CLI syntax
 corn [command] [options]
 
-# Run default pipeline
-corn deploy --profile default --region ap-southeast-2
-
-# Run `microservice1` only
-corn deploy --profile default --region ap-southeast-2 --pipeline microservice1
-
-# Run `microservice2` only (because of dependency, `microservice1` will automatically run first)
-corn deploy --profile default --region ap-southeast-2 --pipeline microservice2
+# Run pipeline
+corn deploy --profile default --region ap-southeast-2 --pipeline default
 ```
