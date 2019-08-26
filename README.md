@@ -1,6 +1,6 @@
 # 🌽 Corn CLI
 
-> Work in progress
+🚨 Corn CLI has been deprecated, please use [Vīnm CLI](https://github.com/maoosi/vinm-cli).
 
 ## Installation
 
