@@ -1,6 +1,7 @@
-# 🌽 Corn CLI
+# DEPRECATED - 🌽 Corn CLI
 
-🚨 Corn CLI has been deprecated, please use [Vīnm CLI](https://github.com/maoosi/vinm-cli).
+> :exclamation: Corn CLI has been deprecated, please use [Vīnm CLI](https://github.com/maoosi/vinm-cli).
+
 
 ## Installation
 
